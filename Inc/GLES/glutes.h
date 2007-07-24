@@ -626,9 +626,10 @@ FGAPI GLfloat FGAPIENTRY glutStrokeHeight( void* font );
 FGAPI void    FGAPIENTRY glutBitmapStringPoints( void* font, int x, int y, const char *string );
 FGAPI void    FGAPIENTRY glutBitmapStringTex( void* font, int x, int y, const char *string );
 FGAPI void    FGAPIENTRY glutStrokeString( void* font, const char *string );
+#if defined(_WIN32)
 // style bits signification:  1:italic | 2:bold | 4:underlined
 FGAPI void	  FGAPIENTRY glutTrueTypeStringPoints(WCHAR *fontname, int fontsize, int style, int x, int y, const WCHAR *string);
-
+#endif
 
 /* Disable textured fonts if the GL_OES_draw_texture extension is not defined */
 #if defined(GLUTES_USE_TEXTURED_FONTS) && defined(GL_OES_draw_texture)

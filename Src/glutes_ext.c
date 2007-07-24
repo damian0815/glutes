@@ -197,7 +197,9 @@ static struct name_address_pair glut_functions[] =
    { "glutStrokeHeight", (void *) glutStrokeHeight },
    { "glutBitmapString", (void *) glutBitmapStringPoints },
    { "glutStrokeString", (void *) glutStrokeString },
+#if TARGET_HOST_WIN32
    { "glutTrueTypeString", (void *) glutTrueTypeString },
+#endif
 //   { "glutWireRhombicDodecahedron", (void *) glutWireRhombicDodecahedron },
 //   { "glutSolidRhombicDodecahedron", (void *) glutSolidRhombicDodecahedron },
 //   { "glutWireSierpinskiSponge ", (void *) glutWireSierpinskiSponge },

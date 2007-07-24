@@ -327,7 +327,8 @@ glutBitmapStringPoints(void* fontID, int x, int y, const char *string)
 }
 
 
-void FGAPIENTRY 
+#if TARGET_HOST_WIN32
+void FGAPIENTRY
 glutTrueTypeStringPoints(WCHAR *fontname, int fontsize, int style, int x, int y, const WCHAR *string)
 {
 	int len, xx = 0, yy = 0, nbpoints = 0, i;
@@ -479,6 +480,7 @@ glutTrueTypeStringPoints(WCHAR *fontname, int fontsize, int style, int x, int y,
 	free(indices);
 	free(points);
 }
+#endif /* TARGET_HOST_WIN32 */
 
 
 #ifdef GL_OES_draw_texture

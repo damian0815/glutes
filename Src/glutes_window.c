@@ -72,23 +72,101 @@ extern void __glCreateContext(SFG_Window* w);
  */
 #if TARGET_HOST_UNIX_X11
 
-XVisualInfo* fgChooseVisual( void )
-{
-#define BUFFER_SIZES 6
-    int bufferSize[BUFFER_SIZES] = { 16, 12, 8, 4, 2, 1 };
-    GLboolean wantIndexedMode = GL_FALSE;
-    int attributes[ 32 ];
-    int where = 0;
-
-    /*
-     * First we have to process the display mode settings...
-     */
 /*
  * Why is there a semi-colon in this #define?  The code
  * that uses the macro seems to always add more semicolons...
  */
 #define ATTRIB(a) attributes[where++]=a;
 #define ATTRIB_VAL(a,v) {ATTRIB(a); ATTRIB(v);}
+
+#if defined(USE_EGL)
+EGLConfig fgChooseConfig( void )
+{
+    EGLConfig config;
+    EGLint    found_configs = 0;
+    int attributes[ 32 ];
+    int where = 0;
+
+    if( fgState.DisplayMode & GLUT_INDEX )
+    {
+        fgError("Indexed color buffers not supported.");
+        return 0;
+    }
+    else
+    {
+        ATTRIB_VAL( EGL_RED_SIZE,   1 );
+        ATTRIB_VAL( EGL_GREEN_SIZE, 1 );
+        ATTRIB_VAL( EGL_BLUE_SIZE,  1 );
+        if( fgState.DisplayMode & GLUT_ALPHA )
+            ATTRIB_VAL( EGL_ALPHA_SIZE, 1 );
+    }
+
+    if( fgState.DisplayMode & GLUT_DEPTH )
+        ATTRIB_VAL( EGL_DEPTH_SIZE, 1 );
+
+    if( fgState.DisplayMode & GLUT_STENCIL )
+        ATTRIB_VAL( EGL_STENCIL_SIZE, 1 );
+
+    ATTRIB_VAL( EGL_SURFACE_TYPE,   EGL_WINDOW_BIT );
+
+    /*
+     * Push a null at the end of the list
+     */
+    ATTRIB( EGL_NONE );
+
+    if (eglChooseConfig(fgDisplay.eglDisplay, attributes,
+                        &config, 1, &found_configs) == EGL_FALSE ||
+        found_configs == 0)
+    {
+        fgError("Unable to find a suitable config.");
+        return 0;
+    }
+    return config;
+}
+#endif /* USE_EGL */
+
+XVisualInfo* fgChooseVisual( void )
+{
+    /*
+     * First we have to process the display mode settings...
+     */
+#if defined(USE_EGL)
+    EGLConfig config = fgChooseConfig();
+    VisualID  visual_id = 0;
+
+    if (!config)
+    {
+        return NULL;
+    }
+
+    if (eglGetConfigAttrib(fgDisplay.eglDisplay, config, EGL_NATIVE_VISUAL_ID,
+                           (EGLint*)&visual_id) == EGL_FALSE ||
+        !visual_id)
+    {
+        /* Use the default visual when all else fails */
+        XVisualInfo vi_in;
+        int out_count;
+        vi_in.screen = fgDisplay.Screen;
+
+        return XGetVisualInfo(fgDisplay.Display, VisualScreenMask,
+                              &vi_in, &out_count);
+    }
+    else
+    {
+        XVisualInfo vi_in;
+        int out_count;
+
+        vi_in.screen   = fgDisplay.Screen;
+        vi_in.visualid = visual_id;
+        return XGetVisualInfo(fgDisplay.Display, VisualScreenMask|VisualIDMask,
+                              &vi_in, &out_count);
+    }
+#else /* USE_EGL */
+#define BUFFER_SIZES 6
+    int bufferSize[BUFFER_SIZES] = { 16, 12, 8, 4, 2, 1 };
+    GLboolean wantIndexedMode = GL_FALSE;
+    int attributes[ 32 ];
+    int where = 0;
 
     if( fgState.DisplayMode & GLUT_INDEX )
     {
@@ -154,6 +232,7 @@ XVisualInfo* fgChooseVisual( void )
         }
         return NULL;
     }
+#endif /* USE_EGL */
 }
 #endif
 
@@ -234,12 +313,22 @@ GLboolean fgSetupPixelFormat( SFG_Window* window, GLboolean checkOnly,
 void fgSetWindow ( SFG_Window *window )
 {
 #if TARGET_HOST_UNIX_X11
+#  if defined(USE_EGL)
+    if ( window )
+        eglMakeCurrent(
+            fgDisplay.eglDisplay,
+            window->Window.Surface,
+            window->Window.Surface,
+            window->Window.Context
+        );
+#  else /* USE_EGL */
     if ( window )
         glXMakeCurrent(
             fgDisplay.Display,
             window->Window.Handle,
             window->Window.Context
         );
+#  endif /* USE_EGL */
 #elif TARGET_HOST_WIN32
     if( fgStructure.Window )
         ReleaseDC( fgStructure.Window->Window.Handle,
@@ -263,9 +352,10 @@ void fgSetWindow ( SFG_Window *window )
     fgStructure.Window = window;
 }
 
+#if TARGET_HOST_WIN32
 void 
 UpdateWindowPosition(HWND hWnd);
-
+#endif
 
 /*
  * Opens a window. Requires a SFG_Window object created and attached
@@ -367,6 +457,55 @@ void fgOpenWindow( SFG_Window* window, const char* title,
         &winAttr
     );
 
+#if defined(USE_EGL)
+    window->Window.eglConfig = fgChooseConfig();
+
+    /*
+     *  Create the EGL window surface
+     */
+    window->Window.Surface     = eglCreateWindowSurface(fgDisplay.eglDisplay, window->Window.eglConfig, window->Window.Handle, NULL);
+    window->Window.SurfaceType = EGL_WINDOW_BIT;
+
+    if (window->Window.Surface == EGL_NO_SURFACE)
+    {
+        fgError("Window surface creation failed.");
+        return;
+    }
+
+    if ( window->IsMenu )
+    {
+        /*
+         * If there isn't already an OpenGL rendering context for menu
+         * windows, make one
+         */
+        if ( !fgStructure.MenuContext )
+        {
+            fgStructure.MenuContext =
+                (SFG_MenuContext *)malloc ( sizeof(SFG_MenuContext) );
+            fgStructure.MenuContext->VisualInfo = window->Window.VisualInfo;
+            fgStructure.MenuContext->Context = eglCreateContext(fgDisplay.eglDisplay, window->Window.eglConfig, 0, NULL);
+        }
+
+        window->Window.Context = eglCreateContext(fgDisplay.eglDisplay, window->Window.eglConfig, 0, NULL);
+    }
+    else if ( fgState.UseCurrentContext )
+    {
+      window->Window.Context = eglGetCurrentContext();
+
+      if ( ! window->Window.Context )
+        window->Window.Context = eglCreateContext(fgDisplay.eglDisplay, window->Window.eglConfig, 0, NULL);
+    }
+    else
+        window->Window.Context = eglCreateContext(fgDisplay.eglDisplay, window->Window.eglConfig, 0, NULL);
+
+
+    eglMakeCurrent(
+        fgDisplay.eglDisplay,
+        window->Window.Surface,
+        window->Window.Surface,
+        window->Window.Context
+    );
+#else /* defined(USE_EGL) */
     /*
      * The GLX context creation, possibly trying the direct context rendering
      *  or else use the current context if the user has so specified
@@ -420,6 +559,7 @@ void fgOpenWindow( SFG_Window* window, const char* title,
         window->Window.Handle,
         window->Window.Context
     );
+#endif /* defined(USE_EGL) */
 
     /*
      * XXX Assume the new window is visible by default
@@ -637,7 +777,9 @@ void fgOpenWindow( SFG_Window* window, const char* title,
 #endif
 	fgSetWindow( window );
 
+#if !defined(USE_GLMENU)	
 	window->ButtonUses = 0;
+#endif
 }
 
 
@@ -650,7 +792,9 @@ void fgCloseWindow( SFG_Window* window )
 
 #if TARGET_HOST_UNIX_X11
 
+#if !defined(USE_EGL)
     glXDestroyContext( fgDisplay.Display, window->Window.Context );
+#endif
     XDestroyWindow( fgDisplay.Display, window->Window.Handle );
     XFlush( fgDisplay.Display ); /* XXX Shouldn't need this */
 

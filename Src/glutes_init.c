@@ -111,7 +111,11 @@ void __glInit()
 	if(fgDisplay.eglDisplay)
 		return;
 
+#if TARGET_HOST_UNIX_X11
+	fgDisplay.eglDisplay = eglGetDisplay((NativeDisplayType)fgDisplay.Display);
+#else
 	fgDisplay.eglDisplay = eglGetDisplay((NativeDisplayType)EGL_DEFAULT_DISPLAY);
+#endif
 
 	if(!eglInitialize(fgDisplay.eglDisplay, &majorVersion, &minorVersion))
 		fgError("Unable to initialize OpenGL|ES!");
@@ -138,9 +142,11 @@ void fgInitialize( const char* displayName )
     if( fgDisplay.Display == NULL )
         fgError( "failed to open display '%s'", XDisplayName( displayName ) );
 
+#if !defined(USE_EGL)
     if( !glXQueryExtension( fgDisplay.Display, NULL, NULL ) )
         fgError( "OpenGL GLX extension not supported by display '%s'",
             XDisplayName( displayName ) );
+#endif
 
     fgDisplay.Screen = DefaultScreen( fgDisplay.Display );
     fgDisplay.RootWindow = RootWindow(

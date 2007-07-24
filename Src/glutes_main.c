@@ -70,10 +70,10 @@
 /* -- PRIVATE FUNCTIONS ---------------------------------------------------- */
 void __glCreateSurface(SFG_Window* w);
 
+#ifdef _WIN32_WCE
 void 
 UpdateWindowPosition(HWND hWnd)
 {
-#ifdef _WIN32_WCE
 	{
 	int cx, cy;
 	SIPINFO si;
@@ -99,8 +99,8 @@ UpdateWindowPosition(HWND hWnd)
 	MoveWindow(hWnd, 0, 0,  GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
 	SetForegroundWindow((HWND)((ULONG)hWnd | 0x00000001));
 	}
-#endif
 }
+#endif
 
 /*
  * Handle a window configuration change. When no reshape
@@ -783,6 +783,7 @@ void FGAPIENTRY glutMainLoopEvent( void )
             GETWINDOW( xmotion );
             GETMOUSE( xmotion );
 
+#ifdef USE_GLMENU
             if( window->ActiveMenu )
             {
                 if( window == window->ActiveMenu->ParentWindow )
@@ -797,6 +798,7 @@ void FGAPIENTRY glutMainLoopEvent( void )
 
                 break;
             }
+#endif
 
             /*
              * XXX For more than 5 buttons, just check {event.xmotion.state},
@@ -863,6 +865,7 @@ void FGAPIENTRY glutMainLoopEvent( void )
              *    select the menu entry and deactivate the menu
              */
             /* Window has an active menu, it absorbs any mouse click */
+#ifdef USE_GLMENU
             if( window->ActiveMenu )
             {
                 if( window == window->ActiveMenu->ParentWindow )
@@ -915,7 +918,7 @@ void FGAPIENTRY glutMainLoopEvent( void )
                 window->State.Redisplay = GL_TRUE;
                 break;
             }
-
+#endif /* USE_GLMENU */
             /*
              * No active menu, let's check whether we need to activate one.
              */
@@ -1235,10 +1238,10 @@ int fgGetWin32Modifiers (void)
         ( ( ( GetKeyState( VK_LMENU    ) < 0 ) ||
             ( GetKeyState( VK_RMENU    ) < 0 )) ? GLUT_ACTIVE_ALT   : 0 );
 }
+#endif
 
 
-
-#ifdef TARGET_HOST_WIN32
+#if TARGET_HOST_WIN32
 /**! \brief   Create a DIB section bitmap.
  * \param   hDC DC handle.
  * \return  Returns the handle to the created bitmap.																   
@@ -1419,6 +1422,7 @@ __glBindContext(SFG_Window* w)
 	if(!w)
 		return;
 
+
 	if(w->Window.Context == EGL_NO_CONTEXT)
 		__glCreateContext(w);
 
@@ -1510,7 +1514,7 @@ __glCreateSurface(SFG_Window* w)
 	// Debug : print the current config
 	if(w->Window.SurfaceType == EGL_PIXMAP_BIT)
 	{
-#ifdef TARGET_HOST_WIN32
+#if TARGET_HOST_WIN32
 		HDC hdc = GetDC(w->Window.Handle);
 		w->Window.pixmap = createPixmap(hdc, w);
 		ReleaseDC(w->Window.Handle, hdc);
@@ -1541,6 +1545,7 @@ __glCreateSurface(SFG_Window* w)
 
 
 ////////////////////////////
+#if TARGET_HOST_WIN32
 
 #ifndef USE_GLMENU
 
@@ -1894,7 +1899,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             fgSetWindow ( window->ActiveMenu->ParentWindow );
             break;
         }
-#endif // USE_GLMENU
+#endif /* USE_GLMENU */
         fgState.Modifiers = fgGetWin32Modifiers( );
 
         if( ( wParam & MK_LBUTTON ) ||

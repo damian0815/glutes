@@ -69,10 +69,12 @@ void FGAPIENTRY glutSwapBuffers( void )
 	{
 		eglSwapBuffers(fgDisplay.eglDisplay, fgStructure.Window->Window.Surface);
 	}
+#if TARGET_HOST_WIN32
 	else if(fgStructure.Window->Window.SurfaceType == EGL_PIXMAP_BIT)
 	{
 		InvalidateRect(fgStructure.Window->Window.Handle, NULL, FALSE);
 	}
+#endif
 
     /* GLUT_FPS env var support */
     if( fgState.FPSInterval )

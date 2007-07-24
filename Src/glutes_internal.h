@@ -40,6 +40,8 @@
 #if !defined(_WIN32)
 #   define  TARGET_HOST_UNIX_X11    1
 #   define  TARGET_HOST_WIN32       0
+#   define  USE_GLMENU
+#   define  USE_EGL
 #else
 #   define  TARGET_HOST_UNIX_X11    0
 #   define  TARGET_HOST_WIN32       1
@@ -370,13 +372,13 @@ struct tagSFG_Context
 	EGLSurface Surface;
 	EGLConfig eglConfig;
 	int SurfaceType;
-	HBITMAP  pixmap;
 	DWORD *bits;
 
 #if TARGET_HOST_UNIX_X11
     XVisualInfo*    VisualInfo;      /* The window's visual information     */
 #elif TARGET_HOST_WIN32
-    HDC				Device;          /* The window's device context         */
+    HBITMAP  pixmap;
+    HDC      Device;          /* The window's device context         */
 #endif
 
     int             DoubleBuffered;  /* Treat the window as double-buffered */
@@ -561,7 +563,9 @@ typedef struct tagSFG_WinMenuItem SFG_WinMenuItem;
 struct tagSFG_WinMenu 
 {
   int					ID;						/* small integer menu id (0-based) */
+#if TARGET_HOST_WIN32
   HMENU					Handle;					/* Win32 menu */
+#endif
   FGCBMenu				Select;					/*  function of menu */
   SFG_WinMenuItem		*List;					/* list of menu entries */
   int					Num;					/* number of entries */
@@ -579,13 +583,15 @@ struct tagSFG_WinMenu
 
 struct tagSFG_WinMenuItem 
 {
+#if TARGET_HOST_WIN32
   HMENU					 Handle;				/* Win32 window for entry */
+  UINT					Unique;					/* unique menu item id (Win32 only) */
+#endif
   SFG_WinMenu			*Menu;					/* menu entry belongs to */
   int					IsTrigger;				/* is a submenu trigger? */
   int					Value;					/* value to return for selecting this
 													entry; doubles as submenu id
 													(0-base) if submenu trigger */
-  UINT					Unique;					/* unique menu item id (Win32 only) */
   char					*Label;					/* __glutStrdup'ed label string */
   int					Len;					/* length of label string */
   int					PixWidth;				/* width of X window in pixels */
@@ -890,16 +896,20 @@ void fgDisplayMenu( void );
 
 #else // ! USE_GLMENU
 
+#if TARGET_HOST_WIN32
 extern SFG_WinMenu *fgGetMenu(HMENU win);
 extern SFG_WinMenu *fgGetMenuByNum(int menunum);
 extern SFG_WinMenuItem *fgGetMenuItem(SFG_WinMenu * menu, HMENU win, int *which);
 extern SFG_WinMenuItem * fgGetUniqueMenuItem(SFG_WinMenu * menu, UINT unique);
+#endif
 
 extern void fgStartMenu(SFG_WinMenu * menu, SFG_Window * window, int x, int y, int x_win, int y_win);
 extern void fgFinishMenu(SFG_Window * win, int x, int y);
 extern void fgSetMenu(SFG_WinMenu * menu);
 
+#if TARGET_HOST_WIN32
 extern HMENU			fgHMenu;
+#endif
 extern unsigned			fgMenuButton;
 extern SFG_WinMenu		*fgMappedMenu;
 extern SFG_WinMenu		*fgCurrentMenu;

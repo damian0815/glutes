@@ -109,12 +109,14 @@ SFG_Window* fgCreateWindow( SFG_Window* parent, const char* title,
 
     window->IsMenu = isMenu;
 
+#if !defined(USE_GLMENU)
 	window->ButtonUses = 0;
+#endif
 
 	/* 
 	 * Initially, no menus attached. 
 	 */
-	for(i = 0; i < FG_MAX_MENUS; i++) {
+	for(i = 0; i < FREEGLUT_MAX_MENUS; i++) {
 		window->Menu[i] = 0;
 	}
 
@@ -131,7 +133,7 @@ SFG_Window* fgCreateWindow( SFG_Window* parent, const char* title,
 /*
  * This private function creates a menu and adds it to the menus list
  */
-#if USE_OLDMENU
+#if defined(USE_GLMENU)
 SFG_Menu* fgCreateMenu( FGCBMenu menuCallback )
 {
     int x = 100, y = 100, w = 100, h = 100;
@@ -180,7 +182,7 @@ SFG_Menu* fgCreateMenu( FGCBMenu menuCallback )
 
     return menu;
 }
-#endif
+#endif /* USE_GLMENU */
 
 /*
  * Linked list of windows to destroy ... this is so we don't destroy a

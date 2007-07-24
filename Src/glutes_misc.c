@@ -189,6 +189,7 @@ void FGAPIENTRY glutSimulateButton(int button, int x, int y)
 {
 	glutes_assert_ready;
     glutes_return_if_fail( fgStructure.Window != NULL );
+#if TARGET_HOST_WIN32
 	if(button == GLUT_LEFT_BUTTON)
 		button = WM_LBUTTONDOWN;
 	else if(button == GLUT_MIDDLE_BUTTON)
@@ -196,6 +197,7 @@ void FGAPIENTRY glutSimulateButton(int button, int x, int y)
 	else if(button == GLUT_RIGHT_BUTTON)
 		button = WM_RBUTTONDOWN;
 	SendMessage(fgStructure.Window->Window.Handle, button, 0, MAKELPARAM(x, y));
+#endif
 }
 
 /*** END OF FILE ***/

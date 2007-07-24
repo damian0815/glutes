@@ -124,7 +124,7 @@ void FGAPIENTRY glutSetOption( GLenum eWhat, int value )
  */
 int FGAPIENTRY glutGet( GLenum eWhat )
 {
-#if TARGET_HOST_WIN32
+#if TARGET_HOST_WIN32 || defined(USE_EGL)
     int returnValue = 0;
     GLboolean boolValue = GL_FALSE;
 #endif
@@ -169,12 +169,64 @@ int FGAPIENTRY glutGet( GLenum eWhat )
         return 0;
 
 #if TARGET_HOST_UNIX_X11
+#if defined(USE_EGL)
+    /*
+     * Handle the OpenGL inquiries
+     */
+    case GLUT_WINDOW_RGBA:
+      //glGetBooleanv ( GL_RGBA_MODE, &boolValue );
+      returnValue = boolValue ? 1 : 0;
+      return returnValue;
+    case GLUT_WINDOW_DOUBLEBUFFER:
+      //glGetBooleanv ( GL_DOUBLEBUFFER, &boolValue );
+      returnValue = boolValue ? 1 : 0;
+      return returnValue;
+    case GLUT_WINDOW_STEREO:
+      //glGetBooleanv ( GL_STEREO, &boolValue );
+      returnValue = boolValue ? 1 : 0;
+      return returnValue;
+
+    case GLUT_WINDOW_RED_SIZE:
+      glGetIntegerv ( GL_RED_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_GREEN_SIZE:
+      glGetIntegerv ( GL_GREEN_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_BLUE_SIZE:
+      glGetIntegerv ( GL_BLUE_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_ALPHA_SIZE:
+      glGetIntegerv ( GL_ALPHA_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_ACCUM_RED_SIZE:
+      //glGetIntegerv ( GL_ACCUM_RED_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_ACCUM_GREEN_SIZE:
+      //glGetIntegerv ( GL_ACCUM_GREEN_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_ACCUM_BLUE_SIZE:
+      //glGetIntegerv ( GL_ACCUM_BLUE_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_ACCUM_ALPHA_SIZE:
+      //glGetIntegerv ( GL_ACCUM_ALPHA_BITS, &returnValue );
+      return returnValue;
+    case GLUT_WINDOW_DEPTH_SIZE:
+      glGetIntegerv ( GL_DEPTH_BITS, &returnValue );
+      return returnValue;
+
+    case GLUT_WINDOW_BUFFER_SIZE:
+      returnValue = 1 ;                                      /* ????? */
+      return returnValue;
+    case GLUT_WINDOW_STENCIL_SIZE:
+      returnValue = 0 ;                                      /* ????? */
+      return returnValue;
+#else /* USE_EGL */
     /*
      * The rest of GLX queries under X are general enough to use a macro to
      * check them
      */
 #   define GLX_QUERY(a,b) case a: return fghGetConfig( b );
-
+#error WHAT
     GLX_QUERY( GLUT_WINDOW_RGBA,                GLX_RGBA                );
     GLX_QUERY( GLUT_WINDOW_DOUBLEBUFFER,        GLX_DOUBLEBUFFER        );
     GLX_QUERY( GLUT_WINDOW_BUFFER_SIZE,         GLX_BUFFER_SIZE         );
@@ -191,7 +243,6 @@ int FGAPIENTRY glutGet( GLenum eWhat )
     GLX_QUERY( GLUT_WINDOW_STEREO,              GLX_STEREO              );
 
 #   undef GLX_QUERY
-
     /*
      * Colormap size is handled in a bit different way than all the rest
      */
@@ -206,6 +257,7 @@ int FGAPIENTRY glutGet( GLenum eWhat )
         }
         return fgStructure.Window->Window.VisualInfo->visual->map_entries;
 
+#endif /* USE_EGL */
     /*
      * Those calls are somewhat similiar, as they use XGetWindowAttributes()
      * function

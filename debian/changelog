@@ -1,0 +1,12 @@
+libglutes (1.11-2) unstable; urgency=low
+
+  * Ported from Windows CE to Linux.
+
+ -- unknown <skyostil@unknown>  Wed, 11 Jul 2007 00:21:54 +0300
+
+libglutes (1.11-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- unknown <skyostil@unknown>  Wed, 11 Jul 2007 00:07:57 +0300
+
