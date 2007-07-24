@@ -1,0 +1,46 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glutes", "glutes.vcproj", "{8B0003E0-B2B6-446B-9004-F549D9E184B9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glutes_static", "glutes_static.vcproj", "{A94ACDA2-1C6C-4A98-95F0-DB521596267C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample", "..\..\Sample\VC8.0\sample.vcproj", "{471929A3-11F2-445C-BF91-B4839734A0B5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C} = {A94ACDA2-1C6C-4A98-95F0-DB521596267C}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Pocket PC 2003 (ARMV4) = Release|Pocket PC 2003 (ARMV4)
+		Release|Smartphone 2003 (ARMV4) = Release|Smartphone 2003 (ARMV4)
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B0003E0-B2B6-446B-9004-F549D9E184B9}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
+		{8B0003E0-B2B6-446B-9004-F549D9E184B9}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
+		{8B0003E0-B2B6-446B-9004-F549D9E184B9}.Release|Smartphone 2003 (ARMV4).ActiveCfg = Release|Smartphone 2003 (ARMV4)
+		{8B0003E0-B2B6-446B-9004-F549D9E184B9}.Release|Smartphone 2003 (ARMV4).Build.0 = Release|Smartphone 2003 (ARMV4)
+		{8B0003E0-B2B6-446B-9004-F549D9E184B9}.Release|Win32.ActiveCfg = Release|Win32
+		{8B0003E0-B2B6-446B-9004-F549D9E184B9}.Release|Win32.Build.0 = Release|Win32
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C}.Release|Smartphone 2003 (ARMV4).ActiveCfg = Release|Smartphone 2003 (ARMV4)
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C}.Release|Smartphone 2003 (ARMV4).Build.0 = Release|Smartphone 2003 (ARMV4)
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C}.Release|Win32.ActiveCfg = Release|Win32
+		{A94ACDA2-1C6C-4A98-95F0-DB521596267C}.Release|Win32.Build.0 = Release|Win32
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Pocket PC 2003 (ARMV4).Deploy.0 = Release|Pocket PC 2003 (ARMV4)
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Smartphone 2003 (ARMV4).ActiveCfg = Release|Smartphone 2003 (ARMV4)
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Smartphone 2003 (ARMV4).Build.0 = Release|Smartphone 2003 (ARMV4)
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Smartphone 2003 (ARMV4).Deploy.0 = Release|Smartphone 2003 (ARMV4)
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Win32.ActiveCfg = Release|Win32
+		{471929A3-11F2-445C-BF91-B4839734A0B5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+EndGlobal
