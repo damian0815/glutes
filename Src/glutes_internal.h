@@ -95,6 +95,7 @@
 #if TARGET_HOST_UNIX_X11
     #include <X11/Xlib.h>
     #include <X11/Xatom.h>
+    #include <X11/Xutil.h>
     #include <X11/keysym.h>
 
     #ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
@@ -351,6 +352,7 @@ struct tagSFG_Timer
 
 typedef Window		SFG_WindowHandleType ;
 typedef EGLContext	SFG_WindowContextType ;
+typedef long		DWORD ;
 
 #elif TARGET_HOST_WIN32
 
