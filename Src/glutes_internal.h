@@ -425,7 +425,7 @@ struct tagSFG_WindowState
  * type.
  */
 #define FETCH_WCB(window,cbname) \
-    ((FGCB ## cbname)((window).CallBacks[CB_ ## cbname]))
+(*((FGCB ## cbname *)&((window).CallBacks[CB_ ## cbname])))
 
 /*
  * INVOKE_WCB() is used as:
