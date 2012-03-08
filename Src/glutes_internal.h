@@ -77,7 +77,7 @@
  * Those files should be available on every platform.
  */
 #include <GLES/gl.h>
-#include <GLES/egl.h>
+#include <EGL/egl.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>

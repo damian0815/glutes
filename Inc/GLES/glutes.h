@@ -88,7 +88,7 @@
  * Always include OpenGL|ES and EGL headers
  */
 #include <GLES/gl.h>
-#include <GLES/egl.h>
+#include <EGL/egl.h>
 
 typedef GLfloat GLdouble;	/* trick to garanty same function prototypes */
 

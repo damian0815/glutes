@@ -419,7 +419,7 @@ void fgError( const char *fmt, ... )
 
     va_start( ap, fmt );
 
-    fprintf( stderr, "freeglut ");
+    fprintf( stderr, "glutes ");
     if( fgState.ProgramName )
         fprintf (stderr, "(%s): ", fgState.ProgramName);
 	vsprintf(text, fmt, ap );
@@ -452,7 +452,7 @@ void fgWarning( const char *fmt, ... )
 
     va_start( ap, fmt );
 
-    fprintf( stderr, "freeglut ");
+    fprintf( stderr, "glutes ");
     if( fgState.ProgramName )
         fprintf( stderr, "(%s): ", fgState.ProgramName );
 	vsprintf(text, fmt, ap );
@@ -568,7 +568,7 @@ static void fgSleepForEvents( void )
     err = select( socket+1, &fdset, NULL, NULL, &wait );
 
     if( -1 == err )
-        fgWarning ( "freeglut select() error: %d\n", errno );
+        fgWarning ( "glutes select() error: %d\n", errno );
     
 #elif TARGET_HOST_WIN32
 #endif
