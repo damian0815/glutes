@@ -1,15 +1,15 @@
 # source files.
-SRC =  	$(shell find . -iname "*.c")
+SRC =  	$(shell find ../../Src -iname "*.c")
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(patsubst ../../Src/%.c,%.o,$(SRC))
 
-OUT = ../Lib/libglutes.a
+OUT = ../../Lib/libglutes.a
 
 # include directories
 #INCLUDES = -I. -I../include/ -I/usr/local/include
 
 # C++ compiler flags (-g -O2 -Wall)
-CCFLAGS = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=hard -mfpu=vfp
+CCFLAGS = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=hard 
 
 # compiler
 CCC = gcc
@@ -24,7 +24,7 @@ LDFLAGS = -g
 
 default: $(OUT)
 
-.c.o:
+%.o: 	../../Src/%.c
 	$(CCC) $(INCLUDES) $(CCFLAGS) -c $< -o $@
 
 $(OUT): $(OBJ)
