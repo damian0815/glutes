@@ -213,7 +213,7 @@ target_alias = @target_alias@
 INCLUDES = -I../../Inc
 include_HEADERS = ../../Inc/GLES/glutes.h
 lib_LTLIBRARIES = libglutes.la
-libglutes_la_LIBADD = -lGLES_CM -lX11
+libglutes_la_LIBADD = -lGLESv1_CM -lX11
 libglutes_la_LDFLAGS = -version-info 1:0:0
 libglutes_la_SOURCES = ../../Src/glutes_callbacks.c \
                     ../../Src/glutes_cursor.c \
